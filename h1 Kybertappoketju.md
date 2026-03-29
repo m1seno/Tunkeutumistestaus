@@ -40,15 +40,72 @@ Asensin Kalin virtuaalikoneen tiistain tunnilla, kun en enää muistanut Linux-k
 ## b
 26.3.2026 17:10
 
-Kytkin Hacktheboxin starting_points VPN yhteyden päälle. Kokeilin pingata Googlen DNS-palvelinta ja yksikään paketti ei mennyt läpi. Myöskään selain ei avaa nettisivuja.
+Kytkin Hacktheboxin starting_points VPN yhteyden päälle. Kokeilin pingata Googlen DNS-palvelinta ja yksikään paketti ei mennyt läpi.
+![](h1/VPN.png)
+
+ Myöskään selain ei avaa nettisivuja.
+
+ ## c
+17:38
+
+Tein kaksi porttiskannausta. Ensimmäinen oli Teron kurssisivun (Karvinen 22.3.2026) ohjeistama. Toiseen lisäsin kokeilumielessä parametrin `-Pn`.
+![](h1/porttiskannaus1.png)
+
+#### Parametrit
+
+`-T4` "T" määrittää skannauksen nopeuden. Mitä korkeampi arvo, sen nopeampi skannaus (nmap -h). Korkeampi arvo säätää nmapin sisäisiä parametreja tehden siitää nopeamman ja agressiivisemman. Se lähettää enemmän SYN-paketteja lyhyessä ajassa mikä voi nostaa skannauksen epätarkkuutta ja helpoittaa IDS-järjestelmiä havaitsemaan skannauksen(ChatGPT1).
+
+`-A` Mahdollistaa käyttöjärjestelmän, porttien takana pyörivien palveluiden versiot sekä suorittaa tracerouten(nmap -h). Lisäksi se käyttää NSE:tä (Nmap Script Scanning). Kun portit on löydetty, niitä vastaan "hyökätään" skriptien avulla. Sen avulla voidaan mm. kerätä lisätietoa sekä testata haavoittuvuuksia ja autentikointia.(ChatGPT1)
+
+`-Pn` Tämä parametri ohittaa host discoveryn(nmap -h). Normaalisti nmap käyttää ICMPv4 -protokollaa, eli pingaa kohdetta. Palomuuri voidaan konfiguroida niin, että se blokkaa ICMP -paketit, jolloin nmap olettaa että portit ovat offline. -Pn siirtyy suoraan porttiskannaukseen ja olettaa että kaikki portit ovat online, joka yleisesti ottaen parantaa tuloksia. (ChatGPT1)
+
+#### Tulokset
+1. Aikaleima nmapin käynnistymisestä.
+2. Näyttää että skannaus kohdistettiin hostin link-local osoitteeseen.
+3. Kerrotaan että link-local osoite vastaa alle millisekunnin latencyllä.
+4. Nmap skannasi pelkästää IPv4 -osoitteen.
+5. Kaikki yleisimmät portit ovat kiinni.
+6. "Reset" tarkoittaa että host vastaa aktiivisesti. Jos näkyisi "filtered", niin palomuuri blokkaisi skannausta. (ChatGPT2)
+7. Käyttöjärjestelmää ei voitu päätellä.
+8. Matkan varrella ei ollut reitittimiä.
+
+Ps. `-Pn` ei vaikuttanut tuloksiin koska localhost ei blokkaa ICMP -paketteja
+
+## d
+Asensin ssh-palvelimen ja apache -veppipalvelimen komennolla
+
+`sudo apt-get install ssh-server apache2`.
+
+Ja käynnistin palvelut
+```
+sudo systemctl start ssh
+sudo systemctl start apache2
+```
+
+Tein uuden porttiskannauksen.
+![](h1/porttiskannaus2.png)
+
+- Nyt tulokset näyttävät että portit 22 ja 80 ovat avattu.
+- Porttiskannaus osasi myös määritellä ssh ja apache -palveluiden ohjelmistoversiot.
+- Lisäksi se löysi apachen default pagen.
+- Koska ssh ja apache ohjelmistot ovat debian pohjaisia, osasi nmap myös päätellä, että kohdejärjestelmä on Linux 5.0 - 6.2. Tämä tosin menee luultavasti ainakin osittain arvailuksi, sillä todellisuudessa käyttöjärjestelmän versio ei vastaa tätä.
+![](h1/uname%20-a.png)
 
 ## Lähteet
 Amin, R., Cloppert, M. & Hutchins, E. Tammikuu 2011. Intelligence-Driven Computer Network Defense
 Informed by Analysis of Adversary Campaigns and
 Intrusion Kill Chains. Luettavissa: https://lockheedmartin.com/content/dam/lockheed-martin/rms/documents/cyber/LM-White-Paper-Intel-Driven-Defense.pdf. Luettu: 24.3.2026.
 
+ChatGPT1. "Selitä nampin parametrit -T, -Pn ja -A yksityiskohtaisesti ja teknisesti."
+
+ChatGPT2. "Mitä "reset" tarkoittaa nmapin tuloksissa?"
+
 Rhysider, J. 3.2.2026. Phrack. Darknet Diaries -podcast. Kuunneltavissa: https://open.spotify.com/episode/0G8Q2d8x1XeXu7Zh0mxWEK?si=78d80a9c9ea449a8. Kuunneltu: 25.3.2026.
 
 Finlex. KKO:2003:36. Luettavissa: https://www.finlex.fi/fi/oikeuskaytanto/korkein-oikeus/ennakkopaatokset/2003/36. Luettu: 24.3.2026.
 
+Karvinen, T. 22.3.2026. Tunkeutumistestaus. Luettavissa: https://terokarvinen.com/tunkeutumistestaus/. Luettu: 24.3.2026.
+
 McCoy, C., Santos, O., Sternstein, J. & Taylor R. Huhtikuu 2019. 4.3 Surveying Essential Tools for Active Reconnaissance: Port Scanning and Web Service Review. O'Reilly. Video. Katsottavissa: https://learning.oreilly.com/videos/the-art-of/9780135767849/9780135767849-SPTT_04_03/. Katsottu: 25.3.2026.
+
+Nmap help page (nmap -h).
