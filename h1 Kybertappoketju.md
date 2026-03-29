@@ -41,6 +41,7 @@ Asensin Kalin virtuaalikoneen tiistain tunnilla, kun en enää muistanut Linux-k
 26.3.2026 17:10
 
 Kytkin Hacktheboxin starting_points VPN yhteyden päälle. Kokeilin pingata Googlen DNS-palvelinta ja yksikään paketti ei mennyt läpi.
+
 ![](h1/VPN.png)
 
  Myöskään selain ei avaa nettisivuja.
@@ -49,6 +50,7 @@ Kytkin Hacktheboxin starting_points VPN yhteyden päälle. Kokeilin pingata Goog
 17:38
 
 Tein kaksi porttiskannausta. Ensimmäinen oli Teron kurssisivun (Karvinen 22.3.2026) ohjeistama. Toiseen lisäsin kokeilumielessä parametrin `-Pn`.
+
 ![](h1/porttiskannaus1.png)
 
 #### Parametrit
@@ -85,12 +87,14 @@ sudo systemctl start apache2
 ```
 
 Tein uuden porttiskannauksen.
+
 ![](h1/porttiskannaus2.png)
 
 - Nyt tulokset näyttävät että portit 22 ja 80 ovat avattu.
 - Porttiskannaus osasi myös määritellä ssh ja apache -palveluiden ohjelmistoversiot.
 - Lisäksi se löysi apachen default pagen.
 - Koska ssh ja apache ohjelmistot ovat debian pohjaisia, osasi nmap myös päätellä, että kohdejärjestelmä on Linux 5.0 - 6.2. Tämä tosin menee luultavasti ainakin osittain arvailuksi, sillä todellisuudessa käyttöjärjestelmän versio ei vastaa tätä.
+
 ![](h1/uname%20-a.png)
 
 ## e
@@ -105,6 +109,7 @@ Lisäsin vielä `-sS` parametrin jolloin lähetetään pelkästään TCP SYN. My
 Tässä kohtaa painoin hacktheboxin hint-painiketta. Se kehotti käyttämään parametria `-p-`, joka skannaa kaikki 65535 porttia, sekä käyttämään `-T5` nopeuttamaan skannausta (man nmap).
 
 Tätä vinkkiä hyödyntäen saatiin vihdoin tuloksia.
+
 ![](h1/Redeemer%20nmap.png)
 
 Tuloksista näkyy, että portin 6379 takana on redis, joka on in-memory database.
@@ -112,9 +117,11 @@ Tuloksista näkyy, että portin 6379 takana on redis, joka on in-memory database
 Tietokantaa voi käyttää komentoriviltä käsin käyttämällä ohjelmaa redis-cli (Redis).
 
 Hacktheboxin kysymysiä miettimällä ja redisin help sivua hyödyntämällä pääsin kirjautumaan sisään. Info -komennolla tietokannasta sai lisää tietoa.
+
 ![](h1/connect%20redis.png)
 
 Käyttämällä komentoa `select` sain valittua oikean tietokannan, vaikka tässä taisi olla vain yksi tietokanta, joten se ei välttämättä ollut tarpeellinen komento(ChatGPT3). `keys *` -komennolla sain listattua kaikki tietokannan avaimet(ChatGPT4). Ja get flag komennolla näin lipun sisällön.
+
 ![](h1/redis%20flag.png)
 
 ## Lähteet
