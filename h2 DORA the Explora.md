@@ -22,6 +22,28 @@ Harjoituksessa on seurattu Teron kurssisivun (Karvinen 22.3.2026) tehtävänanto
 
 ## Asenna Metasploitable 2
 
+Latasin Metasploitable 2 -virtuaalikoneen osoitteesta https://sourceforge.net/projects/metasploitable/. Asennus oli suoraviivainen eikä aiheuttanut ongelmia. Valitsin default muistin (512MB) ja CPU:den (1 kpl) määrän. Verkkokortiksi laitoin Host-only Adapter.
+![](h2/metasploitable.png)
+
+## Virtuaaliverkko
+
+VirtualBoxissa oli valmiiksi määritelty Host-only verkko, joten sitä ei tarvinnut luoda erikseen.
+![](h2/hostOnly.png)
+
+Kali -koneelleni annoin kaksi virtuaalista verkkokorttia. Toisena on NAT, joka reitittää pois lähiverkosta, ja toisena Host-only, joka toimii labraverkkona virtuaalikoneiden välillä.
+![](h2/kaliNIC.png)
+
+## Verkon testaaminen
+Käynnistin Kalin ja tarkistin ip-osoitteen komennolla `ip a`. Eth0 -liitäntä on NAT:n käytössä ja eth1 on host-only. Suljin eth0 -liitännän komennolla `sudo ip link set eth0 down`. Nyt näemme että liitäntä on down -tilassa. Kokeilin pingata 8.8.8.8 ja syötteessä ilmoitettiin välittömästi, että verkko ei ole tavoitettavissa.
+
+Seuraavaksi käynnistin Metasploitablen ja tarkistin ip osoitteen. Ip -osoite oli samassa verkkoavaruudessa kuin Kali. Metasploitablelta ei myöskään saanut yhteyttä internettiin.
+![](h2/metaIp.png)
+
+Lopuksi pingasin Kalilta Metasploitableen ja tämä onnistui, eli kaiken pitäisi olla kunnossa porttiskannausta varten.
+![](h2/kaliIp.png)
+
+## Porttiskannaus
+
 
 ## Lähteet
 Buuri, M. 31.3.2026. DORA and TLPT testing. Payment Systems Department, Bank of Finland. Luettavissa: https://terokarvinen.com/buuri-2026-dora-and-threat-lead-penetration-testing/buuri-2026-dora-and-threat-lead-penetration-testing--teros-pentest-course.pdf. Luettu: 1.4.2026.
