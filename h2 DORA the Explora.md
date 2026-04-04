@@ -65,15 +65,43 @@ Kyseistä porttia käyttää HTTP, joka ei salaa liikennettä. Lisäksi web-palv
 Palveluna tässä toimii Apache 2.2.8 jonka tuki lopetettiin lähes vuosikymmen sitten. Se sisältää lukuisia haavoittuvuuksia. (apache.org)
 
 ## Korkataan
+Katsoin Youtubesta Metasploit tutorialin ja rupesin hommiin (Bombal 14.3.2025).
+
+Käynnistin Metasploitin komennolla `msfconsole`. Päätin koittaa hyödyntää aiemmin mainitsemaani vsftpd -haavoittuvuutta. Kirjoittamalla `search vsftpd` voin hakea metasploitin kirjastoista kaikkia kyseiseen palvelinohjelmaan liittyviä moduuleja.
+
+Haku löysi kaksi moduulia. Toinen vaikuttaisi olevan DoS -hyökkäyksen scripti ja toinen etsimämme backdoor -exploitti.
+![](h2/search%20vsftpd.png)
+
+Otin exploitin käyttöön komennolla `use 1`. Komennolla `options` saa lisätietoa konfiguroitavista parametreista, joita hyökkäys tarvitsee onnistuakseen. Tässä tapauksessa piti konfiguroida ainoastaan LHOST (listening host) ja RHOST (remote host).
+![](h2/options.png)
+
+Parametrit saa asetettua `set` -komennolla.
+![](h2/set%20hosts.png)
+
+Sitten ajetaan vain komento `run` tai `exploit`, joka aloittaa hyökkäyksen. Kuten syötteestä näkyy, metasploit kertoo että takaovi on avattu Meterpreter sessioon. Meterpreter on hyökkäyksessä lähetetty hyötykuorma, joka avaa hyökättävään koneeseen komentotulkin (doubleoctopus).
+![](h2/exploit.png)
+
+Nyt voimme ajaa komentoja korkatussa metasploitablessa. `help` komennolla saa lisätietoa mitä komentoja meterpreterissä voi ajaa. `sysinfo` ja `ipconfig` vahvistavat, että olemme tosiaan päässeet kohdekoneeseen.
+![](h2/korkattu.png)
+![](h2/ipconfig.png)
+
+Voimme myös avata perinteisen linux terminaalin komennolla `shell`. Nyt näemme että meillä on root-oikeudet käytössä.
+![](h2/shell.png)
+
+
 
 ## Lähteet
 Apache. Apache HTTP Server 2.2 vulnerabilities. Luettavissa: https://httpd.apache.org/security/vulnerabilities_22.html. Luettu: 3.4.2026.
+
+Bombal, D. 14.3.2025. Metasploit Hacking Demo (includes password cracking). Katsottavissa: https://www.youtube.com/watch?v=bBut8D7usKA&t=95s. Katsottu: 4.4.2026.
 
 Buuri, M. 31.3.2026. DORA and TLPT testing. Payment Systems Department, Bank of Finland. Luettavissa: https://terokarvinen.com/buuri-2026-dora-and-threat-lead-penetration-testing/buuri-2026-dora-and-threat-lead-penetration-testing--teros-pentest-course.pdf. Luettu: 1.4.2026.
 
 DORA. Article 26, Advanced testing of ICT tools, systems and proesses vased on TLPT. Luettavissa: https://www.digital-operational-resilience-act.com/Article_26.html. Luettu 2.4.2026.
 
 DORA. Article 27, Requirements for testers for the carrying out of TLPT. Luettavissa: https://www.digital-operational-resilience-act.com/Article_27.html. Luettu: 2.4.2026.
+
+Doubleoctopus. Meterpreter. Luettavissa: https://doubleoctopus.com/security-wiki/threats-and-tools/meterpreter/. Luettu: 4.4.2026.
 
 Google 1. AI-yhteenveto. "vsftpd 2.3.4 vulnerability"
 
