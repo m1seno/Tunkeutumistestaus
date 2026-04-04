@@ -37,6 +37,7 @@ Kali -koneelleni annoin kaksi virtuaalista verkkokorttia. Toisena on NAT, joka r
 Käynnistin Kalin ja tarkistin ip-osoitteen komennolla `ip a`. Eth0 -liitäntä on NAT:n käytössä ja eth1 on host-only. Suljin eth0 -liitännän komennolla `sudo ip link set eth0 down`. Nyt näemme että liitäntä on down -tilassa. Kokeilin pingata 8.8.8.8 ja syötteessä ilmoitettiin välittömästi, että verkko ei ole tavoitettavissa.
 
 Seuraavaksi käynnistin Metasploitablen ja tarkistin ip osoitteen. Ip -osoite oli samassa verkkoavaruudessa kuin Kali. Metasploitablelta ei myöskään saanut yhteyttä internettiin.
+
 ![](h2/metaIp.png)
 
 Lopuksi pingasin Kalilta Metasploitableen ja tämä onnistui, eli kaiken pitäisi olla kunnossa porttiskannausta varten.
@@ -47,6 +48,7 @@ Skannasin koko lähiverkon komennolla `namp -sn 192.168.56.0/24`. -sn flagi jät
 ![](h2/nmap%20ip%20skannaus.png)
 
 Nmap löysi 4 hostia verkosta. Tiedämme, että .1 on default gateway, .100 on dns-palvelin, .101 on kali, joten 102 on oltava metasploitable. Metasploitablen web-sivu vahvisti asian.
+
 ![](h2/meta%20selaimessa.png)
 
 ## Porttiskannaus
