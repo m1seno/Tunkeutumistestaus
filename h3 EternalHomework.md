@@ -60,6 +60,31 @@ Parametrilla `-S` voi hakea tuloksia hakusanan perusteella. (services -h)
 
 ![](h3/services2.png)
 
+Sekä hosts että services ovat hyödyllisiä työkaluja. Metasploitissa toimii myös clear -komento, eli jos haluaa "siivota" terminaalia, niin hostit ja portit saa aina uudestaan näkyviin tietokannasta. 
+
+## d) Internet famous
+EternalBlue on NSA:n kehittämä hyökkäystyökalu, joka hyödynsi Microsoftin SMB-protokollan nollapäivähaavoittuvuutta. Vuonna 2017 Eternal Blueta hyödynnettiin sekä WannaCry että NotPetya -kyberhyökkäyksissä, joista arvioiden mukaan koitui yhteensä noin 14 miljardin dollarin vahingot. (wikipedia)
+
+##### 9.4.2026 17:58
+Exploitti löytyy metasploitista hakusanalla "eternalblue".
+
+![](h3/searchEternalBlue.png)
+
+Koska en tiedä tarkalleen mikä windows-versio metasploitablessa on, valitsin "Automatic target", eli `use 1`.
+
+Asetin rhostin ja lhostin ip-osoitteet ja tarkistin että konfiguraatiot on oikein.
+
+![](h3/setEternalBlue.png)
+
+##### 18:34
+Ajoin hyökkäyksen pariin otteeseen, mutta molemmilla kerroilla tuli ilmoitus "Host does not appear vulnerable".
+
+![](h3/runEternalBlue.png)
+
+Vasta tässä kohtaa tajusin olleeni tyhmä. EternalBlue on windows haavoittuvuus, eli se ei tietenkään toimi metasploitableen.
+
+
+
 ## Lähteet
 
 hosts -h. Metasploitin help-sivu hosts -komennolle.
@@ -67,3 +92,5 @@ hosts -h. Metasploitin help-sivu hosts -komennolle.
 nmap -h. Nmapin help -sivu linuxin terminalissa.
 
 services -h. Metasploitin help-sivu services -komennolle.
+
+wikipedia. EternalBlue. Luettavissa: https://en.wikipedia.org/wiki/EternalBlue. Luettu: 9.4.2026
