@@ -83,11 +83,42 @@ Ajoin hyökkäyksen pariin otteeseen, mutta molemmilla kerroilla tuli ilmoitus "
 
 Vasta tässä kohtaa tajusin olleeni tyhmä. EternalBlue on windows haavoittuvuus, eli se ei tietenkään toimi metasploitableen.
 
+## e) Vertaile nmap:n omaa tiedostoon tallennusta (-oA foo) ja db_nmap:n tallennusta tietokantoihin
 
+#### Metasploit database
+Metasploitin tietokannan sisältöä voi käsitellä monilla eri komennoilla (metasploit help). Näistä hyödyllisimmät ovat varmaankin juuri services ja hosts joita käsiteltiin aiemmassa harjoituksessa. Analyze kuulostaa paperilla hyvältä, mutta se ei löydä ainakaan metasploitablesta suoraan haavoittuvuuksia, vaikka ajoin nmapin uudestaan ``-A`` flagilla.
+
+Tiedot esitetään järjestellyssä ja siistityssä muodossa. Eli esim verbose -tiedot eivät näy edellä mainituilla komennoilla.
+
+![](h3/metasploit_db.png)
+
+Tietokannan sisällön voi myös ``db_export -f xml metasploit_db`` exportata tiedostoon, jolloin siitä pysty hakemaan grepin avulla, mutta oman testaukseni perusteella en näe tässä hirveästi lisäarvoa.
+
+- `-f` Määrittele formaatti (vaihtoehtoina xml ja pwdump)
+- `xml` Valittu formaatti
+- `metasploit_db` Tiedoston nimi
+
+![](h3/dbFile.png)
+
+#### Nmap save to file
+
+Tein uuden porttiskannauksen samoilla parametreilla,
+mutta nyt lisäsin -oA flagin, joka tallentaa
+skannauksen tulokset kolmeen eri formaattiin.
+
+![](h3/nmap.png)
+![](h3/files.png)
+
+Näistä gnmap ja xml ovat melko ikävää luettavaa, joten unohdetaan
+ne tässä kohtaa. Nmap formaatti sen sijaan on suora kopio itse skannauksesta.
+Mainittavampana erona metasploitin tietokantaan on se, että myös verbose tiedot tallentuvat.
+Näin ollen käyttäjä voi nähdä mitä "taustalla" on tapahtunut skannauksen aikana.
 
 ## Lähteet
 
 hosts -h. Metasploitin help-sivu hosts -komennolle.
+
+metasploit help. Metasploitin help sivu.
 
 nmap -h. Nmapin help -sivu linuxin terminalissa.
 
