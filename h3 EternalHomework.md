@@ -63,7 +63,7 @@ Parametrilla `-S` voi hakea tuloksia hakusanan perusteella. (services -h)
 Sekä hosts että services ovat hyödyllisiä työkaluja. Metasploitissa toimii myös clear -komento, eli jos haluaa "siivota" terminaalia, niin hostit ja portit saa aina uudestaan näkyviin tietokannasta. 
 
 ## d) Internet famous
-EternalBlue on NSA:n kehittämä hyökkäystyökalu, joka hyödynsi Microsoftin SMB-protokollan nollapäivähaavoittuvuutta. Vuonna 2017 Eternal Blueta hyödynnettiin sekä WannaCry että NotPetya -kyberhyökkäyksissä, joista arvioiden mukaan koitui yhteensä noin 14 miljardin dollarin vahingot. (wikipedia)
+EternalBlue on NSA:n kehittämä hyökkäystyökalu, joka hyödynsi Microsoftin SMB-protokollan nollapäivähaavoittuvuutta. Vuonna 2017 Eternal Blueta hyödynnettiin sekä WannaCry että NotPetya -kyberhyökkäyksissä, joista arvioiden mukaan koitui yhteensä noin 14 miljardin dollarin vahingot. (Wikipedia)
 
 ##### 9.4.2026 17:58
 Exploitti löytyy metasploitista hakusanalla "eternalblue".
@@ -114,14 +114,62 @@ ne tässä kohtaa. Nmap formaatti sen sijaan on suora kopio itse skannauksesta.
 Mainittavampana erona metasploitin tietokantaan on se, että myös verbose tiedot tallentuvat.
 Näin ollen käyttäjä voi nähdä mitä "taustalla" on tapahtunut skannauksen aikana.
 
+## Murtaudu Metasploitablen vsftpd-palveluun
+
+Tein tämän jo viime viikolla metasploitin avulla.
+Yritän siis nyt tehdä saman käyttäen alkuperäistä metodia,
+josta näin sattumalta videoan viime viikolla kun yritin opetella
+metasploitin käyttöä. (Bombal 14.3.2025)
+
+Tarvittavat työkalut ovat nmap ja ncat.
+Ncat on Nmap-projektiin kuuluva komentorivityökalu,
+jolla voidaan lähettää ja vastaanottaa dataa verkon yli
+TCP- ja UDP-protokollilla.
+
+Aloitetaan tarkastelemalla tiedostoon tallennettuja porttiskannauksen tuloksia.
+
+![](h3/nmap_vsftpd.png)
+
+Vsftp -palvelin on portin 21 takana. Se tulee siis olemaan hyökkäyksen kohteena.
+
+Ensimmäinen tehtävä on otta yhteys porttiin 21 netcatilla.
+220-koodi kertoo että yhteys on avattu.
+
+Palvelimelle täytyy antaa käyttäjänimi komennolla USER sekä salasana komennolla PASS.
+Käyttäjänimeksi kelpaa mitä tahansa, kunhan se loppuu hymiöön :). Hymiö on se, mikä laukaiseen varsinaisen haavoittuvuuden.
+Salasanaksi kelpaa mitä tahansa.
+
+Tämän jälkeen palvelin ei kerro että mitään olisi tapahtunut,
+mutta nyt portin 6200 taaksi olisi pitänyt avautua root shell.
+Ctrl-C:llä pääsee pois netcatin yhteydestä.
+
+![](h3/attack_vsftpd.png)
+
+Voimme tarkistaa onko portti todella auki skannaamalla sen nmapilla.
+
+![](h3/port_6200.png)
+
+Skannaus osoittaa että portti on auki. 
+Tässä on tärkeää käyttää `-sS` -flagia sillä se suorittaa vain osittaisen handshaken (SYN) (nmap -h).
+Ilmeisesti skannaamalla portin ilman tätä voi aiheuttaa portin sulkeutumisen (Bombal 14.3.2025).
+
+Sitten otetaan vain yhteys kyseiseen porttiin, mikä antaa root-oikeudet kohdekoneelle.
+
+![](h3/access_6200.png)
+
+
+
 ## Lähteet
+Bombal, D. 14.3.2025. Metasploit Hacking Demo (includes password cracking). Katsottavissa: https://www.youtube.com/watch?v=bBut8D7usKA&t=95s. Katsottu: 4.4.2026.
 
 hosts -h. Metasploitin help-sivu hosts -komennolle.
 
 metasploit help. Metasploitin help sivu.
 
+nmap.org. Ncat. Luettavissa: https://nmap.org/ncat/. Luettu 10.4.2026.
+
 nmap -h. Nmapin help -sivu linuxin terminalissa.
 
 services -h. Metasploitin help-sivu services -komennolle.
 
-wikipedia. EternalBlue. Luettavissa: https://en.wikipedia.org/wiki/EternalBlue. Luettu: 9.4.2026
+Wikipedia. EternalBlue. Luettavissa: https://en.wikipedia.org/wiki/EternalBlue. Luettu: 9.4.2026
