@@ -226,6 +226,23 @@ Kun ajoin exploitin se avasi reverse shellin root oikeuksin kohdekoneelle.
 
 ![](h3/samba_run.png)
 
+## i) Demonstroi Meterpretrin ominaisuuksia
+Meterpreterissä on paljon komentoja joilla pystyy tutkimaan kohdekoneen hakemistoja ja tiedostoja.
+Tiedostoja ja hakemistoja voi myös ladata `download` komennolla. Saattaa kyllä olla parempi vain kopioida niitä toiseen shelliin,
+mutta jos tiedosto on todella iso, niin tämä voi olla hyvä vaihtoehto siihen.
+
+![](h3/mp_download.png)
+
+Meterpreterissä on myös paljon hyödyllisiä komentoja pivotointia varten. Maininnan arvoisia ovat
+esim. `arp` arp-taulun tutkimiseen, `netstat` verkkoyhteyksien tarkasteluun ja `route` reititystaulun näkemiseen.
+
+![](h3/mp_arp.png)
+![](h3/mp_route.png)
+
+Tämän lisäksi sillä voi ottaa kuvakaappauksia näytöstä, käynnistää keyloggerin (windowsilla) kohdekoneen näppäimistön painallusten tallentamiseen, sekä käynnistää kohdekoneen web-camin ja mikrofonin.
+
+
+
 ## Lähteet
 AskUbuntu. SSH returns: no matching host key type found. Their offer: ssh-dss. Luettavissa: https://askubuntu.com/questions/836048/ssh-returns-no-matching-host-key-type-found-their-offer-ssh-dss. Luettu: 11.4.2026
 
