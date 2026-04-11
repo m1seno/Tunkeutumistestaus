@@ -119,18 +119,20 @@ Näin ollen käyttäjä voi nähdä mitä "taustalla" on tapahtunut skannauksen 
 Tein tämän jo viime viikolla metasploitin avulla.
 Yritän siis nyt tehdä saman käyttäen alkuperäistä metodia,
 josta näin sattumalta videoan viime viikolla kun yritin opetella
-metasploitin käyttöä. (Bombal 14.3.2025)
+metasploitin käyttöä. (Bombal, D 14.3.2025)
 
 Tarvittavat työkalut ovat nmap ja ncat.
 Ncat on Nmap-projektiin kuuluva komentorivityökalu,
 jolla voidaan lähettää ja vastaanottaa dataa verkon yli
-TCP- ja UDP-protokollilla.
+TCP- ja UDP-protokollilla. (GeeksfotGeeks 25.4.2023)
 
 Aloitetaan tarkastelemalla tiedostoon tallennettuja porttiskannauksen tuloksia.
 
 ![](h3/nmap_vsftpd.png)
 
 Vsftp -palvelin on portin 21 takana. Se tulee siis olemaan hyökkäyksen kohteena.
+
+##### 10.4.2026 22:00
 
 Ensimmäinen tehtävä on otta yhteys porttiin 21 netcatilla.
 220-koodi kertoo että yhteys on avattu.
@@ -140,7 +142,7 @@ Käyttäjänimeksi kelpaa mitä tahansa, kunhan se loppuu hymiöön :). Hymiö o
 Salasanaksi kelpaa mitä tahansa.
 
 Tämän jälkeen palvelin ei kerro että mitään olisi tapahtunut,
-mutta nyt portin 6200 taaksi olisi pitänyt avautua root shell.
+mutta nyt portin 6200 taakse pitäisi avautua root shell.
 Ctrl-C:llä pääsee pois netcatin yhteydestä.
 
 ![](h3/attack_vsftpd.png)
@@ -151,24 +153,76 @@ Voimme tarkistaa onko portti todella auki skannaamalla sen nmapilla.
 
 Skannaus osoittaa että portti on auki. 
 Tässä on tärkeää käyttää `-sS` -flagia sillä se suorittaa vain osittaisen handshaken (SYN) (nmap -h).
-Ilmeisesti skannaamalla portin ilman tätä voi aiheuttaa portin sulkeutumisen (Bombal 14.3.2025).
+Ilmeisesti skannaamalla portin ilman tätä voi aiheuttaa portin sulkeutumisen (Bombal, D 14.3.2025).
 
 Sitten otetaan vain yhteys kyseiseen porttiin, mikä antaa root-oikeudet kohdekoneelle.
 
 ![](h3/access_6200.png)
 
+## Kerää levittäytymisessä (lateral movement) tarvittavaa tietoa metasploitablesta
 
+11.4.2026 13:30
+Aloitin selvittämällä mitä tietoa kannattaa etsiä, josta voi olla hyötyä pivotoinnissa (ChatGPT1).
+Ehdotuksia tuli rutkasti, mutta aikatauluhaasteista johtuen käyn läpi ainoastaan yhden esimerkkitapauksen.
+
+Passwd sisältää järjestelmän käyttäjiin liittyvää tietoa, kun taas shadow sisältää käyttäjien salasanojen hashit.
+Molemmat tiedostot löytyvät /etc hakemistosta.
+
+![](h3/passwd.png)
+![](h3/shadow.png)
+
+Avasin kaliin toisen terminaalin ja loin kaksi tiedosta,
+jonka jälkeen copypaste tiedostojen sisällöt omalle koneelleni.
+Nyt voimme käyttää erilaisia työkaluja hashien murtamiseen.
+
+![](h3/kopioi.png)
+
+John the Ripper on suosittu salasanojen murtamiseen kehitetty ohjelma. Unshadow taas on osa John the Ripper -pakettia, 
+joka yhdistää passwd ja shadow tiedostot, jotta John voi käyttää niitä. (Ubuntu Manuals)
+
+Unshadow ajetaan komennolla `unshadow [passwd] [shadow] > [uusi tiedosto]`.
+
+![](h3/unshadow.png)
+
+Käytin John the Ripperiä vertaamaan hasheja salasanalistaan. (kali.org)
+
+![](h3/john.png)
+
+Käyttämäni salasanatiedosto sisälsi 6/7 salasanoista. Ainoastaan root -käyttäjän salasanaa ei onnistuttu murtamaan.
+
+![](h3/cracked.png)
+
+Tässä kohtaa olisin voinut kokeilla toista salasanalistaa, tai koittaa bruteforcettaa sitä,
+mutta päätin että tämä riittää tältä erää.
+
+Koitin ottaa ssh-yhteyden msfadmin käyttäjänä. Tämä ei onnistunut heti,
+ja lyhyen selvitystyön jälkeen kävi ilmi, että ssh ei oletuksena enää tue vanhentunutta HostKeyAlgoritmia. (AskUbuntu)
+Tämän voi onneksi pakottaa `-o` flagilla (option), jolloin voi manuaalisesti määritellä mitä algoritmia halutaan käyttää.
+
+Nyt pääsimme takaisin sisään ja meillä on tukeva jalansija kohdekoneella.
+
+![](h3/ssh_msfadmin.png)
 
 ## Lähteet
+AskUbuntu. SSH returns: no matching host key type found. Their offer: ssh-dss. Luettavissa: https://askubuntu.com/questions/836048/ssh-returns-no-matching-host-key-type-found-their-offer-ssh-dss. Luettu: 11.4.2026
+
 Bombal, D. 14.3.2025. Metasploit Hacking Demo (includes password cracking). Katsottavissa: https://www.youtube.com/watch?v=bBut8D7usKA&t=95s. Katsottu: 4.4.2026.
+
+ChatGPT1. "Mitä tietoa kannattaa etsiä linux koneesta, mistä voisi olla hyötyä pivotoinnissa".
+
+GeeksforGeeks. 25.4.2023 Introduction to Netcat. Luettavissa: https://www.geeksforgeeks.org/computer-networks/introduction-to-netcat/. Luettu 10.4.2026.
 
 hosts -h. Metasploitin help-sivu hosts -komennolle.
 
+kali.org. John. Luettavissa: https://www.kali.org/tools/john/. Luettu: 11.4.2026
+
 metasploit help. Metasploitin help sivu.
 
-nmap.org. Ncat. Luettavissa: https://nmap.org/ncat/. Luettu 10.4.2026.
+Nipun, J. Kesäkuu 2020. Mastering Metasploit - Fourth Edition. Luettavissa: https://learning.oreilly.com/library/view/mastering-metasploit/9781838980078/. Luettu: 11.4.2026
 
 nmap -h. Nmapin help -sivu linuxin terminalissa.
+
+Ubuntu Manuals. Unshadow. Luettavissa: https://manpages.ubuntu.com/manpages/noble/man8/unshadow.8.html. Luettu: 11.4.2026.
 
 services -h. Metasploitin help-sivu services -komennolle.
 
