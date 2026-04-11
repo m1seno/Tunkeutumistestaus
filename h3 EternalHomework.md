@@ -203,6 +203,24 @@ Nyt pääsimme takaisin sisään ja meillä on tukeva jalansija kohdekoneella.
 
 ![](h3/ssh_msfadmin.png)
 
+## h) Murtaudu Metasploitableen jollain toisella tavalla
+
+##### 22:10
+
+Valitsin kohteekseni Samba SMB daemonin joka on portin 139 takana.
+
+![](h3/samba_139.png)
+
+Etsin exploittia komennolla `search samba`, mutta metasploit palautti 77 moduulia, joten tässä kohtaa piti googlettaa 
+Samba smbd vulnerabilities. Nopeasti kävi ilmi, että kyseessä on username map script (rapid7). Tämä löytyikin etsinnän tuloksista, joten valitsin sen.
+
+Exploitille piti määritellä lhost ja rhost joten laitoin ne kuntoon.
+![](h3/samba_exploit.png)
+
+Kun ajoin exploitin se avasi reverse shellin root oikeuksin kohdekoneelle.
+
+![](h3/samba_run.png)
+
 ## Lähteet
 AskUbuntu. SSH returns: no matching host key type found. Their offer: ssh-dss. Luettavissa: https://askubuntu.com/questions/836048/ssh-returns-no-matching-host-key-type-found-their-offer-ssh-dss. Luettu: 11.4.2026
 
@@ -221,6 +239,8 @@ metasploit help. Metasploitin help sivu.
 Nipun, J. Kesäkuu 2020. Mastering Metasploit - Fourth Edition. Luettavissa: https://learning.oreilly.com/library/view/mastering-metasploit/9781838980078/. Luettu: 11.4.2026
 
 nmap -h. Nmapin help -sivu linuxin terminalissa.
+
+rapid7. Samba "username map script" Command Execution. Luettavissa: https://www.rapid7.com/db/modules/exploit/multi/samba/usermap_script/. Luettu: 11.4.2026.
 
 Ubuntu Manuals. Unshadow. Luettavissa: https://manpages.ubuntu.com/manpages/noble/man8/unshadow.8.html. Luettu: 11.4.2026.
 
