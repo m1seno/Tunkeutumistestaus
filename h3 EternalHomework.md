@@ -215,7 +215,12 @@ Etsin exploittia komennolla `search samba`, mutta metasploit palautti 77 moduuli
 Samba smbd vulnerabilities. Nopeasti kävi ilmi, että kyseessä on username map script (rapid7). Tämä löytyikin etsinnän tuloksista, joten valitsin sen.
 
 Exploitille piti määritellä lhost ja rhost joten laitoin ne kuntoon.
+
 ![](h3/samba_exploit.png)
+
+Tässä kohtaa muistin käydä avaamassa listening portin 4444 komennolla `sudo ufw allow 4444/tcp`.
+
+![](h3/ufw.png)
 
 Kun ajoin exploitin se avasi reverse shellin root oikeuksin kohdekoneelle.
 
