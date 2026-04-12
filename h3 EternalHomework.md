@@ -203,6 +203,9 @@ Nyt pääsimme takaisin sisään ja meillä on tukeva jalansija kohdekoneella.
 
 ![](h3/ssh_msfadmin.png)
 
+Menin vielä myöhemmin takaisin sisään ja tarkistin millaiset oikeudet msfadminilla on, ja kävi ilmi että meillä on nyt täydet sudo oikeudet.
+![](h3/sudo%20-l.png)
+
 ## h) Murtaudu Metasploitableen jollain toisella tavalla
 
 ##### 22:10
@@ -241,7 +244,37 @@ esim. `arp` arp-taulun tutkimiseen, `netstat` verkkoyhteyksien tarkasteluun ja `
 
 Tämän lisäksi sillä voi ottaa kuvakaappauksia näytöstä, käynnistää keyloggerin (windowsilla) kohdekoneen näppäimistön painallusten tallentamiseen, sekä käynnistää kohdekoneen web-camin ja mikrofonin.
 
+## j) Tallenna shell-sessio tekstitiedostoon script-työkalulla
 
+##### 12.4.2026 16:40
+Aloitin tallennuksen komennolla `script -fa log001.txt`.
+- `-f` Tallentaa komennot reaaliajassa, jotta niitä voidaan myös seurata reaaliajassa (StackOverflow).
+- `-a` Määrittää että tiedostossa olevaa sisältöä ei ylikirjoiteta, vaan uudet komennot lisätään tiedoston loppuun (man script).
+- `log001.txt` Tiedoston nimi.
+
+## k) Pivot point. Laita kaikki harjoituksen tiedostot (script -fa, nmap -oA...) samaan kansioon. Hae sopiva pivot point (sovellus, versio, osoite, MAC-numero) 'grep -r' -komennolla. Keksi uskottava esimerkkikysymys, johon haet vastausta.^
+
+##### 17:00
+Loin uuden hakemiston komennolla ``mkdir lab_metasploitable``. Sitten siirsin kaikki tämän viikon aikana luodut
+tiedostot siihen komennoilla `mv metasploitable* known_hosts arp.txt lab_metasploitable/` ja `mv ~/.john/john.pot lab_metasploitable/`.
+- `metasploitable*` kattaa kaikki tiedostot jotka alkavat sanalla metasploitable.
+
+Nyt minulla on kaikki tiedostot yhdessä paikassa.
+
+![](h3/lab_meta.png)
+
+#### Pivot point
+
+Mihin muihin verkossa oleviin järjestelmiin voin murtautua?
+
+Minullahan on nyt sellainen tilanne, että olen murtautunut kohdejärjestelmälle paria eri haavoittuvuutta hyödyntäen. Olen myös saanut käyttäjien salasanoja murrettua mm. msfadmin, jolla on täydet sudo-oikeudet, eli tämä kone on aikalailla korkattu ja tukeva jalansija varmistettu.
+
+Voin hakea muita koneita verkosta greppaamalla "192.168.56".
+Se palauttaa minulle arp-taulun sisällön jonka olin aikaisemmin kopioinut kohdekoneelta.
+
+![](h3/grep.png)
+
+Sieltä löytyy 100 -loppuinen osoite. Tätä voimme lähteä tutkimaan ja skannaamaan mikä järjestelmä on kyseessä ja miten sitä kohtaan voitaisiin hyökätä.
 
 ## Lähteet
 AskUbuntu. SSH returns: no matching host key type found. Their offer: ssh-dss. Luettavissa: https://askubuntu.com/questions/836048/ssh-returns-no-matching-host-key-type-found-their-offer-ssh-dss. Luettu: 11.4.2026
@@ -256,6 +289,8 @@ hosts -h. Metasploitin help-sivu hosts -komennolle.
 
 kali.org. John. Luettavissa: https://www.kali.org/tools/john/. Luettu: 11.4.2026
 
+man script. Script -työkalun manuaali linuxin terminaalissa.
+
 metasploit help. Metasploitin help sivu.
 
 Nipun, J. Kesäkuu 2020. Mastering Metasploit - Fourth Edition. Luettavissa: https://learning.oreilly.com/library/view/mastering-metasploit/9781838980078/. Luettu: 11.4.2026
@@ -263,6 +298,8 @@ Nipun, J. Kesäkuu 2020. Mastering Metasploit - Fourth Edition. Luettavissa: htt
 nmap -h. Nmapin help -sivu linuxin terminalissa.
 
 rapid7. Samba "username map script" Command Execution. Luettavissa: https://www.rapid7.com/db/modules/exploit/multi/samba/usermap_script/. Luettu: 11.4.2026.
+
+StackOverflow. Force flushing of output to a file while bash script is still running. Luettavissa: https://stackoverflow.com/questions/1429951/force-flushing-of-output-to-a-file-while-bash-script-is-still-running. Luettu: 12.4.2026.
 
 Ubuntu Manuals. Unshadow. Luettavissa: https://manpages.ubuntu.com/manpages/noble/man8/unshadow.8.html. Luettu: 11.4.2026.
 
