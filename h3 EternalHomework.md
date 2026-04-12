@@ -106,7 +106,7 @@ Ajoin hyökkäyksen pariin otteeseen, mutta molemmilla kerroilla tuli ilmoitus "
 
 ![](h3/runEternalBlue.png)
 
-Vasta tässä kohtaa tajusin olleeni tyhmä. EternalBlue on windows haavoittuvuus, eli se ei tietenkään toimi metasploitableen.
+Vasta tässä kohtaa tajusin olleeni tyhmä. EternalBlue on windows haavoittuvuus, eli se ei tietenkään toimi metasploitableen. Huomasin myös lukeneeni tehtävänantoa huolimattomasti, sillä siinä käskettiin etsiä haavoittuvuuksia metasploitablesta. Itse hain metasploitin mukana tulevia exploitteja.
 
 ## e) Vertaile nmap:n omaa tiedostoon tallennusta (-oA foo) ja db_nmap:n tallennusta tietokantoihin
 
