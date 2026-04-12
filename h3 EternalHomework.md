@@ -276,6 +276,25 @@ Se palauttaa minulle arp-taulun sisällön jonka olin aikaisemmin kopioinut kohd
 
 Sieltä löytyy 100 -loppuinen osoite. Tätä voimme lähteä tutkimaan ja skannaamaan mikä järjestelmä on kyseessä ja miten sitä kohtaan voitaisiin hyökätä.
 
+## l) Attaaack! Mitä Mitre Attack taktiikoita ja tekniikoita käytit tässä harjoituksessa?
+
+- Reconnaissance
+    - Gather victiom host information
+    - Gather victim network information
+- Resource Development
+    - Acquire access
+- Initial access
+    - Exploit public-facing application
+- Privilege escalation & Persistence
+    - Valid accounts
+- Credential access
+    -Credentials from password stores
+-Discovery
+    - System network connections discovery
+    - System owner/user discovery
+
+(Mitre Attack)
+
 ## Lähteet
 AskUbuntu. SSH returns: no matching host key type found. Their offer: ssh-dss. Luettavissa: https://askubuntu.com/questions/836048/ssh-returns-no-matching-host-key-type-found-their-offer-ssh-dss. Luettu: 11.4.2026
 
@@ -292,6 +311,8 @@ kali.org. John. Luettavissa: https://www.kali.org/tools/john/. Luettu: 11.4.2026
 man script. Script -työkalun manuaali linuxin terminaalissa.
 
 metasploit help. Metasploitin help sivu.
+
+Mitre Attack. ATT&CK Matrix for Enterprise. Luettavissa: https://attack.mitre.org/. Luettu: 12.4.2026.
 
 Nipun, J. Kesäkuu 2020. Mastering Metasploit - Fourth Edition. Luettavissa: https://learning.oreilly.com/library/view/mastering-metasploit/9781838980078/. Luettu: 11.4.2026
 
