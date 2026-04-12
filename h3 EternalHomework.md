@@ -3,6 +3,31 @@ Harjoitukset on tehty kotitoimistossa Kaarinassa. Koneena oli Lenovo V14 G4 AMN.
 
 ## Lue ja tiivistä
 
+#### Mastering Metasploit (Jaswal, N 2020)
+
+- Metasploit sisältää erilaisia moduuleita:
+    - Exploits: Ajettava koodinpätkä, joka hyödyntää tiettyä kohteen haavoittuvuutta.
+    - Payload: Exploitin mukana lähetettävä, kohdekoneella ajettava koodinpätkä.
+    - Auxiliary: Moduuleita jotka tarjoavat erilaisia toimintoja, kuten skannausta tai satunnaisen / virheellisen datan syöttämistä kohteeseen (fuzzing).
+    - Encoders: Näillä pyritään hämäämään kohdekoneen IDS-järjestelmiä ja palomuureja.
+    - Meterpreter: Payload jolla voi suorittaa komentoja ja toimintoja kohdekoneella.
+
+- Metasploit on avoimen lähdekoodin työkalu, jota voi muokata ja laajentaa omilla moduuleilla.
+- Se sisältää paljon automatisoituja työkaluja jotka nopeuttavat ja helpottavat pentestausta. Etenkin payloadien hallinta on helpompaa kuin manuaalisessa exploitoinnissa.
+- Database toiminnallisuus helpottaa tietojen säilyttämistä ja käytettävyyttä.
+- Erilaisia scriptejä voi hyödyntää löytämään haavoittuvuuksia skannauksen yhteydessä.
+
+#### Mitä 'nmap -sn' tekee?
+
+- `-sn` suorittaa host discoveryn lähettämällä discovery probeja.
+- Oletuksena discovery probet sisältävät ICMP-paketteja, TCP SYN-paketin porttiin 443 ja TCP ACK-paketin porttiin 80. 
+- Jos komento ajetaan sudona, lähetetään SYN-paketti sekä 80 että 443 portteihin.
+- Jos komento ajetaan sudona lähiverkossa, lähetetään myös ARP-kysely.
+
+Lähteenä toimi nmapin virallinen dokumentaatio (nmap.org). Luotan lähteeseen, koska lähtokohtaisesti jos työkalun tekijät eivät tiedä miten se toimii, tuskin kukaan muukaan tietää.
+
+`-sn` ei siis ole pelkkä pingaus, mutta se on silti huomattavasti "hiljaisempi" kuin normaali porttiskannaus, sillä http ja https -portit osaavat odottaa TCP-paketteja.
+
 ## b) Tallenna porttiskannauksen tuloksia Metasploitin tietokantoihin
 
 ##### 8.4.2026 21:48
@@ -314,9 +339,11 @@ metasploit help. Metasploitin help sivu.
 
 Mitre Attack. ATT&CK Matrix for Enterprise. Luettavissa: https://attack.mitre.org/. Luettu: 12.4.2026.
 
-Nipun, J. Kesäkuu 2020. Mastering Metasploit - Fourth Edition. Luettavissa: https://learning.oreilly.com/library/view/mastering-metasploit/9781838980078/. Luettu: 11.4.2026
+Jaswal, N. Kesäkuu 2020. Mastering Metasploit - Fourth Edition. Luettavissa: https://learning.oreilly.com/library/view/mastering-metasploit/9781838980078/. Luettu: 11.4.2026
 
 nmap -h. Nmapin help -sivu linuxin terminalissa.
+
+nmap.org . Host Discovery. Luettavissa: https://nmap.org/book/man-host-discovery.html. Luettu: 12.4.2026.
 
 rapid7. Samba "username map script" Command Execution. Luettavissa: https://www.rapid7.com/db/modules/exploit/multi/samba/usermap_script/. Luettu: 11.4.2026.
 
