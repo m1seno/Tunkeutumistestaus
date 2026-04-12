@@ -1,6 +1,8 @@
 # EternalHomework
 Harjoitukset on tehty kotitoimistossa Kaarinassa. Koneena oli Lenovo V14 G4 AMN. Käyttöjärjestelmänä Windows 11 Pro version 25H2. Virtuaalikoneena oli Linux Kali 6.16.8+kali-amd64.
 
+Harjoituksessa seurataan Teron kotisivujen Karvinen (Karvinen, T 22.3.2026) tehtävänantoa.
+
 ## Lue ja tiivistä
 
 #### Mastering Metasploit (Jaswal, N 2020)
@@ -332,6 +334,8 @@ GeeksforGeeks. 25.4.2023 Introduction to Netcat. Luettavissa: https://www.geeksf
 hosts -h. Metasploitin help-sivu hosts -komennolle.
 
 kali.org. John. Luettavissa: https://www.kali.org/tools/john/. Luettu: 11.4.2026
+
+Karvinen, T. 22.3.2026. Tunkeutumistestaus. Luettavissa: https://terokarvinen.com/tunkeutumistestaus/. Luettu: 8.4.2026.
 
 man script. Script -työkalun manuaali linuxin terminaalissa.
 
