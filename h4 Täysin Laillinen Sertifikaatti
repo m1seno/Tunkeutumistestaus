@@ -35,7 +35,51 @@ Harjoituksessa seurataan Teron kotisivujen Karvinen (Karvinen, T 22.3.2026) teht
 
 ## a) Totally Legit Sertificate. Asenna OWASP ZAP, generoi CA-sertifikaatti ja asenna se selaimeesi. Laita ZAP proxyksi selaimeesi. Laita ZAP sieppaamaan myös kuvat, niitä tarvitaan tämän kerran kotitehtävissä. Osoita, että hakupyynnöt ilmestyvät ZAP:n käyttöliittymään
 
+##### 15.4.2026 14:55
+Päivitin kirjaston ja koneen.
+```
+sudo apt-get update
+sudo apt-get -y upgrade
+```
+Asensin zaproxyn.
+![](h4/install_zaproxy.png)
 
+Zaproxy kysyi haluanko tallentaa istunnon. Valitsin ei tässä vaiheessa.
+![](h4/tallenna%20istunto.png)
+
+Seuraavaksi kysyttiin halutaanko päivittää paketit. Valitsin Update All.
+![](h4/päivitä%20zap.png)
+
+Ja näin saatiin ohjelma toimimaan.
+![](h4/zap%20valmis.png)
+
+Seuraavaksi piti generoida CA-sertifikaatti ja asentaa se selaimeen. Seurasin Teron kurssisivun (Karvinen, T 22.3.2026) ohjeita. zaproxyssä menin Settings -> Network -> Server Certificates, jonka jälkeen tallensin sertifikaatin kotihakemistoon.
+
+Tämän jälkeen seurasin virallista dokumentaatiota (zaproxy) jonka avustuksella sain lisättyä sertifikaatin selaimeen.
+
+Dokumentaatiossa mainittiin, että sertifikaatin käytössä piilee vaara. Kaikki, joilla on root sertifikaatti käytössä, voivat nyt ujuttaa dataa selaimeeni. Eli tämä kannattaa ottaa varmuuden vuoksi pois päältä kun ei tee testauksia.
+
+![](h4/catovbrowser.png)
+
+Määritin zaproxyn sieppaamaan kuvia.
+![](h4/images.png)
+
+Sitten kävin vielä tarkistamassa että proxy toimii link-local osoitteella.
+![](h4/port.png)
+
+Tässä kohtaa en lähtenyt vielä asettamaan proxya firefoxiin, koska en ollut vielä asentanut foxyproxya. Eli kuva ZAPin käyttöliittymässä näkyvästä liikenteestä tulee seuraavassa osiossa.
+
+## b) Kettumaista. Asenna "FoxyProxy Standard" Firefox Addon, ja lisää ZAP proxyksi siihen. Käytä FoxyProxyn "Patterns" -toimintoa, niin että vain valitsemasi weppisivut ohjataan Proxyyn
+
+Asensin foxyproxy -lisäosan ja lisäsin ZAProxyn siihen. Tein myös Proxy by Patterns -konfiguraatiot, joihin laitoin PortSwiggerin ja link-local -osoitteen.
+
+`*` -merkit urlissa tarkoittavat kaikkia mahdollisia osoitteita. Kävin katsomassa, että PortSwiggerin labrat käyttävät osoitteena .web-security-academy.net -loppuisia osoitteita. Näillä säädöillä kaikki labrat pitäisivät toimia ZAP:ssa.
+
+![](h4/foxyproxy.png)
+
+Sitten aloin surffailemaan ydessä labrassa ja testailin tuleeko liikenne näkyviin ZAP:n käyttöliittymään ja hyvin näyttäisi toimivan.
+
+![](h4/zap-toimii.png)
 
 ## Lähteet
 
@@ -48,4 +92,6 @@ portswigger1. Insecure direct object references (IDOR). Luettavissa: https://por
 portswigger2. Path traversal. Luettavissa: https://portswigger.net/web-security/file-path-traversal. Luettu: 15.4.2026.
 
 portswigger3. Cross-site scripting. Luettavissa: https://portswigger.net/web-security/cross-site-scripting. Luettu: 15.4.2026.
+
+zaproxy. Server Certificates. Luettavissa: https://www.zaproxy.org/docs/desktop/addons/network/options/servercertificates/#install. Luettu: 15.4.2026.
 
