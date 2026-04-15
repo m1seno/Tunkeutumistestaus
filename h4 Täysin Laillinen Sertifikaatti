@@ -1,0 +1,51 @@
+# Täysin Laillinen Sertifikaatti
+
+Harjoitukset on tehty kotitoimistossa Kaarinassa. Koneena oli Lenovo V14 G4 AMN. Käyttöjärjestelmänä Windows 11 Pro version 25H2. Virtuaalikoneena oli Linux Kali 6.16.8+kali-amd64.
+
+Harjoituksessa seurataan Teron kotisivujen Karvinen (Karvinen, T 22.3.2026) tehtävänantoa.
+
+## Lue ja tiivistä
+
+#### Broken Access Control (owasp)
+- Broken access control on haavoittuvuus sovelluksen auktorisoinnissa, mikä johtaa siihen, että käyttäjä pääsee operoimaan omien valtuutuksien ulkopuolella.
+- Tyypillisiä haavoittuvuuksia ovat vähimmän oikeuden periaatteen rikkominen, sekä pääsynhallinnan ohittaminen (URL-manipulaatio ja API-pyyntöjen myokkaus).
+- Muita riskejä ovat käyttäjäoikeuksien korottaminen, toisten käyttäjien tietojen käsittely, sekä virheelliset token-, cookie- tai CORS- asetukset.
+- Ehkäisykeinoihin kuuluvat pääsynhallinnan rajaamista backendin puolella, yhtenäisten pääsynhallintamekanismien käyttöä koko sovelluksessa, CORS-käytön rajoittamista, sekä JWT -tokenien voimassaolon rajoittamista. Lisäksi useat virheelliset sisäänkirjautumisyritykset olisi hyvä lokittaa ja niistä pitää lähteä ilmoitus adminille.
+
+#### Insecure direct object references (portswigger1)
+- IDOR on access control -haavoittuvuus jossa hyökkääjä pääsee nostamaan omia käyttöoikeuksiaan tai siirtymään käyttäjätililtä toiselle.
+- Hyödynnetään useiten manipuloimalla kohteen URL:ia, esim vaihtamalla käyttäjän ID, jolloin sovellus palauttaa tietoa ilman että tarkistaa käyttäjän oikeudet.
+- URL:t tulisi suojata niin, että backendissä tarkistetaan jokaisessa pyynnössä, onko käyttäjällä oikeus kyseiseen resurssiin. Käyttöoikeudet tulee myös suunnitella niin, että käyttäjä pääsee käsiksi vain hänelle välttämättömiin resursseihin (least privilige -periaate).
+
+#### Path traversal (portswigger2)
+- Path traversal tarkoittaa hyökkäystä, jossa hyökkääjä pääsee selaimesta navigoimaan palvelimen hakemistoihin, ja näkemään siellä olevia tiedostoja.
+- Yleensä johtuu siitä, että sovellus lataa kuvia URL-parametrin perusteella (esim. filename=218.png) ja hakee tiedoston palvelimen kansiosta /var/www/images/.
+- Haavoittuvuus syntyy, koska sovellus ei tarkista syötettä. Hyökkääjä voi käyttää ../ siirtyäkseen hakemistorakenteessa yläspäin.
+- Tehokkain tapa ehkäistä, on olla käyttämättä käyttäjän syötettä suoraan tiedostopolkujen käsittelyssä. Tietyillä toimenpiteillä voidaan myös varmistaa, että polku pysyy sallitun hakemiston sisällä eikä pääse sen ulkopuolelle.
+
+#### Cross-site scripting (portswigger3)
+- XSS on on haavoittuvuus, jossa hyökkääjä syöttää haitallista JavaScript-koodia sovellukseen, joka suoritetaan uhrin selaimessa.
+- XSS -haavoittuvuutta voi testata syöttämällä sovellukseen alert() tai print() -funktion ja ajamalla sen omassa selaimessa.
+- Hyökkäykstyyppejä on erilaisia:
+    - Reflected XSS: haitallinen koodi tulee suoraan HTTP-pyynnöstä.
+    - Stored XSS: koodi tallennetaan palvelimeen tai tietokantaan ja suoritetaan myöhemmin.
+    - DOM-based XSS: hoovoittuvuus sijaitsee selaimen JavaScript-koodissa.
+- Hyökkääjä voi kaapata käyttäjän session ja kirjautumistiedot, suorittaa toimintoja käyttäjän puolesta, tai muokata sivun sisältöä ja lisätä haitallisia ominaisuuksia.
+- Hyökkäyksiä voidaan estää validoimalla käyttäjän syöte, enkoodaamalla data ennen kuin se näytetään selaimessa, sekä käyttää turvallisia HTTP-otsikoita ja Content Security Policyä.
+
+## a) Totally Legit Sertificate. Asenna OWASP ZAP, generoi CA-sertifikaatti ja asenna se selaimeesi. Laita ZAP proxyksi selaimeesi. Laita ZAP sieppaamaan myös kuvat, niitä tarvitaan tämän kerran kotitehtävissä. Osoita, että hakupyynnöt ilmestyvät ZAP:n käyttöliittymään
+
+
+
+## Lähteet
+
+Karvinen, T. 22.3.2026. Tunkeutumistestaus. Luettavissa: https://terokarvinen.com/tunkeutumistestaus/. Luettu: 8.4.2026.
+
+owasp. A01:2021 – Broken Access Control. Luettavissa: https://owasp.org/Top10/2021/A01_2021-Broken_Access_Control/index.html. Luettu: 15.4.2026.
+
+portswigger1. Insecure direct object references (IDOR). Luettavissa: https://portswigger.net/web-security/access-control/idor. Luettu: 15.4.2026.
+
+portswigger2. Path traversal. Luettavissa: https://portswigger.net/web-security/file-path-traversal. Luettu: 15.4.2026.
+
+portswigger3. Cross-site scripting. Luettavissa: https://portswigger.net/web-security/cross-site-scripting. Luettu: 15.4.2026.
+
