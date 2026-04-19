@@ -85,7 +85,7 @@ Sitten aloin surffailemaan ydessä labrassa ja testailin tuleeko liikenne näkyv
 
 ##### 16.4.2026 12:45
 
-Avasin labran ja kokeilin search toimintoa. Kirjoitin hakukenttään Holidays. Kun painoin enteriä, näin että urlin loppuosa oli `/?search=Holidays`. Sen jälkeen manipuloin urlia. Poistin Holidays sanan ja kirjoitin sen tilalle `<script>alert("You have been hacked!")</script>`. Tämä ratkaisi labran. Ratkaisu oli pääteltävissä labran kuvauksesta, jossa vihjattiin, että haavoittuvuus on nettisivun searh ominaisuudessa.
+Avasin labran ja kokeilin search toimintoa. Kirjoitin hakukenttään Holidays. Kun painoin enteriä, näin että urlin loppuosa oli `/?search=Holidays`. Sen jälkeen manipuloin urlia. Poistin Holidays sanan ja kirjoitin sen tilalle `<script>alert("You have been hacked!")</script>`. Tämä ratkaisi labran. Ratkaisu oli pääteltävissä labran kuvauksesta, jossa vihjattiin, että haavoittuvuus on nettisivun search ominaisuudessa.
 
 ![](h4/reflected_xss.png)
 
@@ -93,7 +93,7 @@ Kävin vielä katsomassa miltä GET-pyyntö näyttää zapissa.
 
 ![](h4/reflected_zap.png)
 
-Täällä näemme että hyökkäys onnistuu, koska se muokkaa html-koodia jonka palvelin lähettää GET-pyynnön vastauksena. Selain suorittaa HTML:n ja sen mukana tulevan JavaScriptin. Jos linkin laittaisi esimerkiksi jollekin keskustelupalstalle, kuka tahansa sen lukeva joutuisi hyökkäyksen uhriksi.
+Täällä näemme että hyökkäys onnistuu, koska se muokkaa html-koodia jonka palvelin lähettää GET-pyynnön vastauksena. Selain suorittaa HTML:n ja sen mukana tulevan JavaScriptin. Jos linkin laittaisi esimerkiksi jollekin keskustelupalstalle, kuka tahansa sitä klikkaava joutuisi hyökkäyksen uhriksi.
 
 ## d) Stored XSS into HTML context with nothing encoded
 
