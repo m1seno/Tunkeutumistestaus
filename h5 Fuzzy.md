@@ -106,12 +106,94 @@ Sitten ajoin containerin.
 Ja näin saatiin harjoitusmaali toimimaan.
 ![](h5/container.png)
 
+Päätin olla lataamatta Teron ehdottamaa sanalistaa, koska olin jo ladannut seclistsin koneelleni.
 
+## c) Basic Content Discovery
+#### 19:46
+Ensimmäinen fuzzaus palautti yhden etsimämme endpointin. Mielenkiintoista oli, että nyt tuloksia ei tarvinnut suodattaa, sillä palvelin oli konfiguroitu oikein palauttamaan 404 NOT FOUND, jos kyseistä endpointtia ei löytynyt, ja tätä kyseistä koodia ffuf ei matchaa.
+
+![](h5/bcd1.png)
+
+Tiestin että piti tehdä vielä toinen fuzzaus, jotta löydän tuon development.log -endpointin. Koska aika oli kortilla, fuskasin vähän ja greppasin hakemaani.
+
+![](h5/grep.png)
+
+Sieltä löytyikin saman niminen (common.txt) lista, jota Tero oli käyttänyt esimerkkiratkaisussa, joten ajattelin että tämä voi hyvällä todennäköisyydellä olla jopa sama lista.
+
+Tein saman fuzzauksen, nyt common.txt -listalla, ja näin löydettiin molemmat endpointit.
+![](h5/bcd2.png)
+
+## d) Content Discovery With Recursion
+Tässä ajettiin sama komento kuin aikaisemmin, mutta nyt `-recursion` parametrilla, joka siis ajaa saman sanalistan jokaiselle endpointille jonka se löytää, kunnes se ei enää löydä mitään.
+
+![](h5/recursion.png)
+
+## e) Content Discovery With File Extensions
+Tässä esitellään ffufin ``-e`` switchiä, jonka avulla voidaan määritellä tiedostomuoto ja laittaa se jokaisen sanalistan sanan perään.
+
+![](h5/extentions.png)
+
+## f) No 404 Status
+Tässä taas ideana osata käyttää suodatinta `-fs` (filter size), kun backendiä ei ole ohjelmoitu palauttamaan 404 -statuskoodia.
+
+Tässä huomaamme, että kaikki responset ovat kooltaan samoja (669 tavua), joten `-fs` on looginen valinta.
+
+![](h5/404_1.png)
+
+Toisaalta tässä tapauksessa myös sanojen `-fw` ja rivien `-fl` mukaan olisi voinut suodattaa.
+
+![](h5/filters.png)
+
+Joka tapauksessa, suodattamalla jonkin näistä, löydämme etsimämme.
+
+![](h5/404_2.png)
+
+## g) Param Mining
+
+Tässä on tarkoitus fuzzata parametria. Eli ollaan oikeassa tiedostopolussa, mutta backend odottaa jotain parametria esim. hakukentästä tai lomakkeesta jonka frontend sitten lähettää backendille.
+
+Tässä tehtävässä oletetaan että id:n arvolla 1 löytyy joka tapauksessa jotain, ja etsitään sille oikeaa parametria.
+
+SecLists:stä löytyi sanalista joka vaikutti lupaavalta.
+![](h5/parameter.png)
+
+Ja sanalista myös toimitti.
+![](h5/ffuf_parameters.png)
+
+## h) Rate Limited
+Tässä pyritään ratkaisemaan ongelma, jossa endpointti on suojattu liian monelta GET-pyynnöltä tietyssä ajassa. Tämä on todennäköisesti tehty joko turvallisuussyistä tai kuorman rajoittamiseksi. `-p` switchillä määritellään aika sekunneissa, jonka ffuf odottaa ennen kun se lähettää seuraavan pyynnön. `-t` switchillä määritellään kuinka monta pyyntöä lähetetään kerralla (oletus on 40 kpl). (ffuf -h)
+
+Ajetaan ensin fuzzaus ilman näitä em. switchejä.
+
+![](h5/rate_limited.png)
+
+`-mc` switchillä määritellään mitkä HTTP-statuskoodit näytetään. Koska backend on rajoittanut pyynnöt 50/s, ja koska ffuf lähettää 40 pyyntöä kerralla ja lähettää niitä niin nopeasti kuin mahdollista, saamme pelkästään 429 Too Many Requests -vastauksia.
+
+Kun rajasimme pyynnöt viiteen kerralla ja 0.1 sekunnin intervalleihin, emme saaneet enää yhtäkään 429 statuskoodia. Operaatioon meni yli puolitoista minuuttia (48 pyyntöä sekunnissa), kun aikaisempi oli ohi sekunnissa (2898 pyyntöä sekunnissa), mutta nyt löysimme etsimämme.
+![](h5/rate_limited2.png)
+
+## i) Subdomains - Virtual Host Enumeration
+
+Viimeisessä tehtävässä etsitään alidomaineja. Niitä voi hakea `-H` switchillä, jolla määritettän headerin nimi=Header ja arvo=FUZZ, eli sanalistan sisältö (ffuf -h).
+
+![](h5/headers1.png)
+
+Nähdään, että kaikki vastaukset ovat jälleen kooltaan samoja, jote suodatetaan kyseinen koko pois.
+
+![](h5/headers2.png)
+
+Tällä ei löytynytkään osumaa, koska en ollut lukenut ohjeistusta huolella, ja olin määritellyt headeriksi vain sanalistan sisällön.
+
+Kun lisäsin sanalistan sisällön perään vielä .ffuf.me, niin löysin redhatin.
+
+![](h5/headers3.png)
 
 ## Lähteet
 ChatGPT. "Mitä -t lippu tekee komennossa sudo docker build -t ffufme?"
 
 docker run --help. Dockerin run -komennon help page.
+
+ffuf -h. Ffuf help page.
 
 Helsec. 0x03 Still Fuzzing Faster (U Fool) - joohoi - HelSec Virtual meetup #1 Katsottavissa: https://www.youtube.com/watch?v=mbmsT3AhwWU. Katsottu: 25.4.2026.
 
