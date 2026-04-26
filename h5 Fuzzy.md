@@ -79,13 +79,50 @@ Ja nämä olivatkin ratkaisut tehtävään.
 ![](h5/git.png)
 ![](h5/wp-admin.png)
 
-## Lähteet
-Karvinen, T. 22.3.2026. Tunkeutumistestaus. Luettavissa: https://terokarvinen.com/tunkeutumistestaus/. Luettu: 24.4.2026.
+## b) Fuff me. Asenna FuffMe-harjoitusmaali. Karvinen 2023: [Fuffme - Install Web Fuzzing Target on Debian](https://terokarvinen.com/2023/fuffme-web-fuzzing-target-debian/)
 
-Karvinen, T. 10.3.2023. Find Hidden Web Directories - Fuzz URLs with ffuf. Luettavissa: https://terokarvinen.com/2023/fuzz-urls-find-hidden-directories/. Luettu: 24.4.2026
+#### 18:12
+Kohdeympäristön alustaminen oli suoraviivaista ja onnistui ongelmitta.
+
+Asensin dockerin ja kloonasin ffufme paketin GitHubista
+```
+sudo apt-get -y install docker.io
+git clone https://github.com/BuildHackSecure/ffufme.git
+```
+Sitten rakensin Docker containerin.
+
+`sudo docker build -t ffufme .`
+- `build` Komento rakentaa imagen Dockerfilestä.
+- `-t ffufme` Määrittää rakennettavan Docker-imagen nimi (ChatGPT).
+- `.` Määrittää että image rakennetaan nykyiseen hakemistoon.
+
+Sitten ajoin containerin.
+
+`sudo docker run -d -p 80:80 ffufme`
+- `-d` Container ajetaan taustalla ja tulostetaan ID (docker run --help).
+- `-p 80:80` Julkaistaan containerin portti hostin portille (docker run --help).
+- `ffufme` Ajettavan containerin nimi.
+
+Ja näin saatiin harjoitusmaali toimimaan.
+![](h5/container.png)
+
+
+
+## Lähteet
+ChatGPT. "Mitä -t lippu tekee komennossa sudo docker build -t ffufme?"
+
+docker run --help. Dockerin run -komennon help page.
 
 Helsec. 0x03 Still Fuzzing Faster (U Fool) - joohoi - HelSec Virtual meetup #1 Katsottavissa: https://www.youtube.com/watch?v=mbmsT3AhwWU. Katsottu: 25.4.2026.
 
 Hoikkala, J. 16.9.2023. ffuf - Fuzz Faster U Fool. Luettavissa: https://github.com/ffuf/ffuf/blob/master/README.md. Luettu: 24.4.2026.
+
+Karvinen, T. 22.3.2026. Tunkeutumistestaus. Luettavissa: https://terokarvinen.com/tunkeutumistestaus/. Luettu: 24.4.2026.
+
+Karvinen, T. 10.3.2023. Find Hidden Web Directories - Fuzz URLs with ffuf. Luettavissa: https://terokarvinen.com/2023/fuzz-urls-find-hidden-directories/. Luettu: 24.4.2026
+
+Karvinen, T. 30.10.2023. Fuffme - Install Web Fuzzing Target on Debian. Luettavissa: https://terokarvinen.com/2023/fuffme-web-fuzzing-target-debian/. Luettu: 26.4.2026.
+
+Langley, A. FFUF Me - Target Practice For FFUF. Luettavissa: https://github.com/BuildHackSecure/ffufme. Luettu: 26.4.2026.
 
 Missler, D. SecLists. The Pentester's Companion. Luettavissa: https://github.com/danielmiessler/seclists. Luettu: 26.4.2026.
