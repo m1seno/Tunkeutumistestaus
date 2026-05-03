@@ -264,9 +264,96 @@ Tarkistin, että apache2 tai nginx ei ole päällä ja käytössä portissa 80. 
 Vaikka koitin useamman kerran ajaa implanttia metasploitablella, niin mikään ei auttanut.
 ![](h6/no_connection.png)
 
+Pitkän debuggauksen jälkeen ChatGPT oli sitä mieltä, että Metasploitable on vaan niin vanha kone (vanhentunut kernel), että näitä sofistikoituneita haittaohjelmia ei voida ajaa siinä. Mielenkiintoista nähdä oliko muilla kurssilaisilla vastaavanlaisia ongelmia kun saan raportin palautettua.
+
+## m) Vapaaehtoinen: Asenna Windows-virtuaalikone ja tee kotiin soittava haittaohjelma siihen & c) Hello, Sliver. Näytä esimerkki http-yhteydestä Sliverillä.
+
+Koska en saanut Sliveriä toimimaan metasploitablella, päätin tehdä tämän vapaaehtoisen tehtävän ja kokeilla sliveriä uudestaan windows kohdekoneella.
+
+Latasin windows 10 iso-kuvan windowsin omilta sivuilta (windows). Annoin virtuaalikoneelle 4GB RAM:ia ja 2 CPU:ta. Verkkoadapteriksi Host-Only Adapter. Kun uusi virtuaalikone luodaan, on tärkeintä ottaa täppä pois kohdasta proceed with unattended istallation. Muuten windows herjaa käynnistyessään puuttuvasta product keystä.
+
+![](h6/product%20key.png)
+
+Manuaalisessa asennuksessa voi valita "I don't have a product key". Tämän jälkeen vaan seurataan Windows setup manageria. Tämä on melko intuitiivinen prosessi vaikka. Sitten Windows asentelee ja käynnistelee itseään aivan tautisen kauan. Odottelun jälkeen windows oli valmis hyökkäyksillemme.
+
+![](h6/windows%20ready.png)
+
+Tarkistin uuden koneen ip-osoitteen ja tarkistin että se saa yhteyden kaliin.
+
+![](h6/windows%20ip.png)
+
+Sitten tein uuden implantin windows järjestelmälle.
+
+![](h6/windows%20implant.png)
+
+Siirsin sen valittuun kansioon ja tein siitä http serverin.
+
+![](h6/windows%20http.server.png)
+
+Hakemistoni löytyi kun otti http serveriin yhteyttä selaimella. Latasin haittaohjelman klikkaamalla linkistä.
+
+![](h6/windows%20download%20filw.png)
+
+Kun ajoin haittaohjelman windows koneella, niin sain välittömästi yhteyden auki sliveriin. Tämä viittaisi siihen että ongelma oli tosiaan metasploitablessa.
+
+![](h6/sliver%20session%20alive.png)
+
+Session saa käyttöön `use <session id>` -komennolla.
+
+![](h6/sliver%20use%20session.png)
+
+Koska aikaa oli mennyt tuhottomasti sekä venomin että sliverin kanssa kikkailuun ja ongelmien debuggaamiseen, en ehtinyt tehdä kaikkia Teron antamia tehtäviä. Testailin silti hieman sliverin toimintoja sekä tarkastelin sliverin http -yhteyttä wiresharkilla, joten nämä tehtävät käyn vielä läpi tässä raportissa, mutta en ehdi tutustua sen enempää yhteyden ominaisuuksien muuttamiseen.
+
+## d) Sniff Sliver! Tarkastele Sliverin http-yhteyttä snifferillä. Mitä havaitset? Mistä ominaisuuksista yhteyden voi tunnistaa?
+
+Kun tarkastelin sliver-yhteyden tiedonsiirtoa, havaitsin, että liikenteessä on todella paljon GET-pyyntöjä. Tämä ei ole sinänsä yllättävää, sillä olimmehan tehneet http-yhteyden. Mikä itseäni kummastutti oli se, että GET-pyynnöt teki .103, eli windows kone johon murtauduttiin. Lisäksi Kali (tai siis sliver-server tässä tapauksessa) vastasi jatkuvasti 204 No Content. Keskustelin asiasta tekoälyn kanssa (ChatGPT). Ilmeisesti tämä johtuu siitä, että implantti on koodattu toimimaan beaconina.
+
+Homma menee kutakuinkin näin: Implantti pollaa jatkuvasti sliver-serveriä. Jos käyttäjä ei ole antanut komentoja, vastaus on 204. Näitä GET-pyyntöjä lähetetään todella paljon. Kikkailin sliver sessiossa noin 24 minuuttia. Sinä aikana lähetettiin 2864 pakettia, joista 720 (25.1%) oli implantin lähettämiä GET-pyyntöjä.
+
+Jos sliver-clientissä on annettu komento tämä lähetetään 200 OK response-bodyssä. Tämä ei kuitenkaan paljon auta kyberturva-analystia, sillä vaikka kyseessä on http-liikenne, sliver salaa paketeiden sisällön joko kryptaamalla tai obfuskoimalla.
+
+- Kryptattu
+
+![](h6/sliver%20kryptattu.png)
+
+- Obfuskoitu (Tämä näyttää jonkin sorttiselta sanalistalta, mikä saa liikenteen näyttämään normaalilta vaikka se onkin todellisuudessa jokin salausmekanismi)
+
+![](h6/sliver%20obfuskoitu.png)
+
+## f) Sliverillä voi tehdä monenlaista kohteessa, ruutukaappauksista alkaen. Näytä esimerkkejä toiminnoista.
+
+Sliver sessio muistuttaa jonkin verran meterpreteriä. Sillä voi antaa paljon erilaisia sisäänrakennettuja komentoja, tai avata shell session kohdekoneeseen.
+
+Koska aika on rajallista, en lähtenyt perehtymään näihin ominaisuuksiin kovin syvällisesti, mutta käydään tässä läpi silti muutama joita kokeilin.
+
+#### info
+- info-komento antaa tietoa kohdekoneesta. Tämä ei varsinaisesti tarjoa mitään maata mullistavaa tietoa, mutta tällä voi tarkistaa että olemme tosiaan päässeet käsiksi kohdejärjestelmään.
+
+![](h6/sliver%20info.png)
+
+#### whoami & getprivs
+- whoami kertoo minkä käyttäjän tunnuksia ollaan käyttämässä.
+- getprivs kertoo mitä käyttöoikeuksia käyttäjällä on Windowsissa.
+
+![](h6/sliver%20whoami%20getprivs.png)
+
+#### ls & download
+- ls komennolla voi tarkastella hakemistojen sisältöä. Tämä toimii hieman eri tavalla kun linuxissa. Itse sain sen toimimaan vain jos laitoin polun heittomerkkeihin.
+- download komennolla voi ladata teidostoja. Tämäkin vaatii heittomerkit ympärille.
+
+![](h6/sliver%20search%20download%20file.png)
+![](h6/sliver%20download%202.png)
+
+#### screenshot
+- screenshot komennolla otetaan kuvakaappaus käyttäjän työpöydästä.
+
+![](h6/sliver%20screenshot.png)
+![](h6/sliver%20screenshot2.png)
 
 ## Lähteet
 BishopFox. Sliver. Luettavissa: https://github.com/BishopFox/sliver. Luettu: 2.5.2026.
+
+ChatGPT. "Miksi sliver-yhteydessä kohdekone lähettää jatkuvasti GET-pyyntöjä ja hyökkäävä kone vastaa 204 No Content?"
 
 CyberOffense. 17.4.2022. Use Msfvenom to Create a Reverse TCP Payload. Katsottavissa: https://www.youtube.com/watch?v=ZqWfDrD2WVY. Katsottu: 28.4.2026.
 
@@ -277,3 +364,5 @@ Sahu, V. 21.1.2024. Staged vs Non-staged Payloads in Cybersecurity. Luettavissa:
 Sliver C2. Getting Started. Luettavissa. https://sliver.sh/docs/?name=Getting+Started. Luettu: 2.5.2026.
 
 Wikipedia. Executable and Linkable Format. Luettavissa: https://en.wikipedia.org/wiki/Executable_and_Linkable_Format. Luettu: 30.4.2026. 
+
+Windows. Windows 10 -asennustietovälineen luonti. Luettavissa: https://www.microsoft.com/fi-fi/software-download/windows10. Luettu: 3.5.2026.
