@@ -1,4 +1,7 @@
 # EternalHomework
+
+[John the Ripper -tehtävä](#lateral-movement-metasploitable)
+
 Harjoitukset on tehty kotitoimistossa Kaarinassa. Koneena oli Lenovo V14 G4 AMN. Käyttöjärjestelmänä Windows 11 Pro version 25H2. Virtuaalikoneena oli Linux Kali 6.16.8+kali-amd64.
 
 Harjoituksessa seurataan Teron kotisivujen Karvinen (Karvinen, T 22.3.2026) tehtävänantoa.
@@ -186,13 +189,13 @@ Sitten otetaan vain yhteys kyseiseen porttiin, mikä antaa root-oikeudet kohdeko
 
 ![](h3/access_6200.png)
 
-## Kerää levittäytymisessä (lateral movement) tarvittavaa tietoa metasploitablesta
+## Lateral movement Metasploitable
 
 11.4.2026 13:30
 Aloitin selvittämällä mitä tietoa kannattaa etsiä, josta voi olla hyötyä pivotoinnissa (ChatGPT1).
 Ehdotuksia tuli rutkasti, mutta aikatauluhaasteista johtuen käyn läpi ainoastaan yhden esimerkkitapauksen.
 
-Passwd sisältää järjestelmän käyttäjiin liittyvää tietoa, kun taas shadow sisältää käyttäjien salasanojen hashit.
+Passwd sisältää järjestelmän käyttäjiin liittyvää tietoa, kun taas shadow sisältää käyttäjien tiivisteet.
 Molemmat tiedostot löytyvät /etc hakemistosta.
 
 ![](h3/passwd.png)
@@ -218,6 +221,8 @@ Käytin John the Ripperiä vertaamaan hasheja salasanalistaan. (kali.org)
 Käyttämäni salasanatiedosto sisälsi 6/7 salasanoista. Ainoastaan root -käyttäjän salasanaa ei onnistuttu murtamaan.
 
 ![](h3/cracked.png)
+
+Tässä tulosteessa esitetään käyttäjänimi:salasana. Eli esim sys salasana "batman", klog salasana "123456789", msfadmin salasana msfadmin jne.
 
 Tässä kohtaa olisin voinut kokeilla toista salasanalistaa, tai koittaa bruteforcettaa sitä,
 mutta päätin että tämä riittää tältä erää.
